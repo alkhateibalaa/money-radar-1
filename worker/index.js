@@ -2,6 +2,7 @@ const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
+    if (url.pathname === '/api/ping') return new Response('pong ' + new Date().toISOString(), { headers: { 'content-type': 'text/plain' } });
     if (url.pathname === '/api/probe') {
       const tests = {
         chart: 'https://query1.finance.yahoo.com/v8/finance/chart/%5EIXIC?range=1d&interval=5m',
@@ -21,12 +22,14 @@ export default {
       const out = {};
       await Promise.all(Object.entries(tests).map(async ([k, u]) => {
         try {
-          const r = await fetch(u, { headers: { 'User-Agent': UA, 'Accept': '*/*' } });
+          const r = await fetch(u, { headers: { 'User-Agent': UA, 'Accept': '*/*' }, signal: AbortSignal.timeout(7000) });
           const t = await r.text();
           out[k] = { status: r.status, len: t.length, head: t.slice(0, 220) };
         } catch (e) { out[k] = { error: String(e) }; }
       }));
-      return Response.json(out);
+      const only = url.searchParams.get('k');
+      const lines = Object.entries(out).filter(([k]) => !only || k === only).map(([k, v]) => k + ' | ' + (v.error || (v.status + ' | ' + v.len + ' | ' + v.head.replace(/\s+/g, ' '))));
+      return new Response(lines.join('\n\n'), { headers: { 'content-type': 'text/plain; charset=utf-8' } });
     }
     return env.ASSETS.fetch(req);
   },
