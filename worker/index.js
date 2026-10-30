@@ -93,11 +93,11 @@ async function chart(sym, range = '1d', interval = '5m') {
 }
 
 async function board(ctx) {
-  return cached(ctx, 'board-v1', 30, async () => {
+  return cached(ctx, 'board-v2', 30, async () => {
     const rows = await Promise.all(BOARD.map(async (b) => {
       try {
         const c = await chart(b.sym, '1d', b.id === 'tasi' ? '15m' : '5m');
-        return { id: b.id, name: b.name, unit: b.unit, ...c };
+        return { id: b.id, unit: b.unit, ...c, name: b.name };
       } catch (e) { return { id: b.id, name: b.name, unit: b.unit, sym: b.sym, error: true }; }
     }));
     return { at: Date.now(), rows };
@@ -118,6 +118,33 @@ async function history(ctx, sym, range) {
   sym = String(sym || '').toUpperCase();
   if (!SYM_RE.test(sym) || !RANGES[range]) return { error: 'bad request' };
   return cached(ctx, `h1-${sym}-${range}`, range === '1d' ? 30 : 600, () => chart(sym, range, RANGES[range]));
+}
+
+// Yahoo v7 quote needs a cookie + crumb; keep them per isolate.
+let CRUMB = null;
+async function crumb() {
+  if (CRUMB && Date.now() - CRUMB.at < 3600e3) return CRUMB;
+  const r = await fetch('https://fc.yahoo.com/', { headers: { 'User-Agent': UA }, redirect: 'manual', signal: AbortSignal.timeout(6000) });
+  const set = r.headers.get('set-cookie') || '';
+  const cookie = set.split(/,(?=\s*[A-Za-z0-9_]+=)/).map((c) => c.split(';')[0].trim()).filter(Boolean).join('; ');
+  const c = await fetch(Y2 + '/v1/test/getcrumb', { headers: { 'User-Agent': UA, Cookie: cookie }, signal: AbortSignal.timeout(6000) });
+  const txt = (await c.text()).trim();
+  if (!c.ok || !txt || txt.length > 30 || /</.test(txt)) throw new Error('no crumb');
+  CRUMB = { at: Date.now(), cookie, crumb: txt };
+  return CRUMB;
+}
+async function quoteBatch(syms) {
+  if (!syms.length) return {};
+  const k = await crumb();
+  const out = {};
+  for (let i = 0; i < syms.length; i += 40) {
+    const part = syms.slice(i, i + 40);
+    const r = await fetch(`${Y2}/v7/finance/quote?symbols=${part.map(encodeURIComponent).join(',')}&crumb=${encodeURIComponent(k.crumb)}`, { headers: { 'User-Agent': UA, Cookie: k.cookie }, signal: AbortSignal.timeout(8000) });
+    if (!r.ok) { if (r.status === 401) CRUMB = null; throw new Error('quote ' + r.status); }
+    const j = await r.json();
+    for (const q of j?.quoteResponse?.result || []) out[q.symbol] = slimQuote(q);
+  }
+  return out;
 }
 
 // ---------- movers & drop radar ----------
@@ -247,7 +274,7 @@ async function movers(ctx) {
 }
 
 async function radar(ctx) {
-  return cached(ctx, 'radar-v2', 120, async () => {
+  return cached(ctx, 'radar-v3', 120, async () => {
     const [mv, spark] = await Promise.all([
       movers(ctx),
       cached(ctx, 'ndx-spark-v1', 900, () => sparkBatch(NDX, '3mo')),
@@ -268,13 +295,23 @@ async function radar(ctx) {
       if (best < 0 && !cand.has(sym)) cand.set(sym, { sym, drop_pct: best, window: best === d1 ? '1d' : '5d', price: last, from_hi3: fromHi, _closes: c });
       else if (cand.has(sym)) Object.assign(cand.get(sym), { _closes: c, from_hi3: fromHi });
     }
-    // Fill fundamentals for B-names via a quick quote screen lookup (from movers lists where possible)
+    // Fundamentals: movers lists first, then a quote lookup for the rest
     const pool = new Map([...mv.losers, ...mv.gainers, ...mv.active].map((r) => [r.sym, r]));
+    const needQ = [...cand.keys()].filter((s) => !pool.has(s) || pool.get(s).mcap == null);
+    try { const q = await cached(ctx, 'rq-' + needQ.sort().join(','), 600, () => quoteBatch(needQ)); for (const [k, v] of Object.entries(q)) pool.set(k, { ...(pool.get(k) || {}), ...v }); } catch (e) { /* fall back to defaults */ }
+    // Price history for today's fallers outside the Nasdaq-100 (RSI, 50-day average)
+    const needC = [...cand.values()].filter((d) => !d._closes).map((d) => d.sym);
+    if (needC.length) {
+      const extra = await cached(ctx, 'rs-' + needC.sort().join(','), 900, () => sparkBatch(needC, '3mo')).catch(() => ({}));
+      for (const [k, v] of Object.entries(extra)) if (cand.has(k) && v.close && v.close.length > 5) { const c = v.close; cand.get(k)._closes = c; cand.get(k).from_hi3 = (c[c.length - 1] / Math.max(...c) - 1) * 100; }
+    }
     const rows = [];
     for (const d of cand.values()) {
       const f = pool.get(d.sym) || {};
       const c = d._closes;
-      const row = { ...f, ...d };
+      const row = { ...f, ...d, price: d.window === '1d' && f.price ? f.price : (f.price ?? d.price) };
+      if (row.mcap == null && NDX.includes(d.sym)) row.mcap = 50e9; // Nasdaq-100 member: assume large cap when unknown
+      row.ndx = NDX.includes(d.sym);
       row.name = row.name || d.sym;
       row.rsi = c ? round(rsi(c), 1) : null;
       row.last_up = c && c.length > 2 ? c[c.length - 1] > c[c.length - 2] && d.window !== '1d' : false;
@@ -354,13 +391,13 @@ function parseRss(xml, feed) {
 const ALERT_RE = /(missile|drone|intercept|air defen[cs]e|civil defen[cs]e|explosion|houthi|siren|attack on|strike on|صاروخ|صواريخ|مسيّر|مسير|اعتراض|الدفاع المدني|الدفاع الجوي|انفجار|الحوثي|هجوم)/i;
 const TAGS = [
   ['Fed', /(\bfed\b|powell|rate (hike|cut)|fomc|federal reserve|الفيدرالي|الفائدة)/i],
-  ['Earnings', /(earnings|results|quarter|revenue|guidance|eps|أرباح|نتائج)/i],
-  ['Chips', /(chip|semiconductor|nvidia|intel|amd|tsmc|broadcom|رقائق|أشباه الموصلات)/i],
-  ['Oil', /(oil|crude|brent|opec|aramco|نفط|برنت|أوبك|أرامكو)/i],
+  ['Earnings', /(earnings|quarterly results|\bq[1-4]\b|revenue|guidance|\beps\b|أرباح|نتائج)/i],
+  ['Chips', /(\bchips?\b|chipmaker|semiconductor|nvidia|intel|amd|tsmc|broadcom|رقائق|أشباه الموصلات)/i],
+  ['Oil', /(\boil\b|crude|brent|opec|aramco|نفط|برنت|أوبك|أرامكو)/i],
   ['Crypto', /(bitcoin|crypto|ethereum|binance|بيتكوين|عملات مشفرة)/i],
-  ['Gold', /(gold|bullion|الذهب)/i],
+  ['Gold', /(\bgold\b|bullion|الذهب)/i],
   ['Saudi market', /(tadawul|tasi|saudi exchange|تاسي|تداول|السوق السعودية)/i],
-  ['Inflation', /(inflation|cpi|pce|prices rose|التضخم)/i],
+  ['Inflation', /(inflation|\bcpi\b|\bpce\b|التضخم)/i],
   ['Events', /(riyadh season|concert|festival|موسم الرياض|حفل|مهرجان)/i],
 ];
 function classify(it, scope) {
@@ -373,7 +410,7 @@ const TONE_DN = /(plunge|sink|slump|tumble|fall|drop|miss|cut|downgrade|sell-?of
 
 async function news(ctx, scope, lang) {
   if (!FEEDS[scope] || !FEEDS[scope][lang]) return { error: 'bad request' };
-  return cached(ctx, `news-v2-${scope}-${lang}`, 150, async () => {
+  return cached(ctx, `news-v3-${scope}-${lang}`, 150, async () => {
     const lists = await Promise.all(FEEDS[scope][lang].map(async (f) => {
       try { return parseRss(await getText(f.url, 8000), f); } catch (e) { return []; }
     }));
@@ -386,7 +423,7 @@ async function news(ctx, scope, lang) {
       seen.add(k);
       if (it.ts && now - it.ts > 4 * 86400e3) continue;
       const t = classify(it, scope);
-      const tone = t === 'Security' ? 'alert' : TONE_DN.test(it.title) ? 'bear' : TONE_UP.test(it.title) ? 'bull' : 'neutral';
+      const tone = t === 'Security' ? 'alert' : scope === 'local' && t !== 'Saudi market' && t !== 'Oil' ? 'neutral' : TONE_DN.test(it.title) ? 'bear' : TONE_UP.test(it.title) ? 'bull' : 'neutral';
       const fresh = it.ts && now - it.ts < 90 * 60e3;
       out.push({ ...it, tag: t, tone, prec: t === 'Security' && it.ts && now - it.ts < 12 * 3600e3 ? 'FLASH' : fresh ? 'PRIORITY' : 'ROUTINE' });
       if (out.length >= 60) break;
