@@ -304,3 +304,31 @@ html[dir="rtl"] .risk-parts li span:last-child, html[dir="rtl"] .wi-t, html[dir=
 html[dir="rtl"] .sc b, html[dir="rtl"] .risk-score { direction: ltr; unicode-bidi: isolate; }
 html[dir="rtl"] .tbl td.num, html[dir="rtl"] .tbl th.num { direction: ltr; text-align: left; }
 html[dir="rtl"] .tile-c { justify-content: flex-start; }
+
+/* ---------- last-update strip ---------- */
+.upd { max-width: 1680px; margin: 12px auto 0; padding: 0 18px; display: flex; align-items: center; gap: 10px 22px; flex-wrap: wrap; }
+.upd-main, .upd-mkt { display: flex; align-items: baseline; gap: 8px; }
+.upd-k { white-space: nowrap; font: 600 10.5px var(--mono); color: var(--mut); text-transform: uppercase; letter-spacing: .1em; }
+html[lang="ar"] .upd-k { font-family: var(--ar); letter-spacing: 0; font-size: 12px; text-transform: none; }
+.upd-v { font: 700 15px var(--mono); color: var(--amber); }
+html[lang="ar"] .upd-v { font-family: var(--ar), var(--mono); }
+.upd-ago { font: 500 11.5px var(--mono); color: var(--up); }
+.upd-ago.stale { color: var(--dn); }
+#upd-mkt { font: 500 12px var(--mono); color: var(--fg2); }
+html[lang="ar"] #upd-mkt { font-family: var(--ar), var(--mono); }
+.upd-list { list-style: none; margin: 0 0 0 auto; padding: 0; display: flex; gap: 6px; flex-wrap: wrap; }
+html[dir="rtl"] .upd-list { margin: 0 auto 0 0; }
+.upd-list li { display: flex; gap: 6px; align-items: baseline; padding: 4px 9px; border: 1px solid var(--line2); border-radius: 4px; background: var(--panel); font: 11px var(--mono); color: var(--fg2); white-space: nowrap; }
+html[lang="ar"] .upd-list li { font-family: var(--ar), var(--mono); }
+.upd-list li b { color: var(--mut); font-weight: 500; }
+.upd-list li i { font-style: normal; color: var(--up); }
+.upd-list li.stale i { color: var(--dn); }
+.upd-list li.wait i { color: var(--mut); }
+@media (max-width: 640px) {
+  .upd { padding: 0 10px; margin-top: 10px; gap: 6px 14px; }
+  .upd-main { width: 100%; flex-wrap: wrap; gap: 4px 8px; }
+  .upd-v { font-size: 13px; }
+  .upd-list { margin: 0; width: 100%; }
+  html[dir="rtl"] .upd-list { margin: 0; }
+  .upd-list li { flex: 1 1 calc(50% - 6px); justify-content: space-between; padding: 4px 7px; }
+}

@@ -13,6 +13,7 @@
       safety: 'For safety alerts follow Saudi Civil Defense and the National Early Warning Platform.', nfa: 'Not financial advice.',
       footer: 'Prices from Yahoo Finance (may lag up to a minute; futures and indices as published). Headlines from CNBC, MarketWatch, Nasdaq, Saudi Gazette, Asharq Al-Awsat and Bing News, linked to their sources. Drop scores are automatic rules, not recommendations.',
       open: 'OPEN', closed: 'CLOSED', pre: 'PRE-MKT', after: 'AFTER-HRS', closesIn: 'closes in', opensIn: 'opens in',
+      lastUpd: 'Last update', mktTime: 'Nasdaq data as of', fPrices: 'Prices', fWatch: 'Watchlist', fMovers: 'Movers', fRadar: 'Drop radar', fNewsM: 'Market news', fNewsL: 'Riyadh news', ruh: 'Riyadh',
       live: 'Live', updated: 'updated', ago: 'ago', now: 'now', s: 's', m: 'm', h: 'h', d: 'd', offline: 'Offline — retrying',
       xfear: 'Extreme fear', fear2: 'Fear', neutral: 'Neutral', greed2: 'Greed', xgreed: 'Extreme greed',
       rVix: 'VIX level', rNdq: 'Nasdaq today', rBreadth: 'Movers breadth', rHaven: 'Gold vs bitcoin',
@@ -32,6 +33,7 @@
       safety: 'لتنبيهات السلامة تابع الدفاع المدني ومنصة الإنذار المبكر الوطنية.', nfa: 'ليست نصيحة مالية.',
       footer: 'الأسعار من Yahoo Finance (قد تتأخر حتى دقيقة). العناوين من مصادر إخبارية مع روابطها الأصلية. نقاط رادار الهبوط قواعد آلية وليست توصيات.',
       open: 'مفتوح', closed: 'مغلق', pre: 'قبل الافتتاح', after: 'بعد الإغلاق', closesIn: 'يغلق بعد', opensIn: 'يفتح بعد',
+      lastUpd: 'آخر تحديث', mktTime: 'بيانات ناسداك حتى', fPrices: 'الأسعار', fWatch: 'المتابعة', fMovers: 'الأكثر حركة', fRadar: 'رادار الهبوط', fNewsM: 'أخبار الأسواق', fNewsL: 'أخبار الرياض', ruh: 'بتوقيت الرياض',
       live: 'مباشر', updated: 'آخر تحديث', ago: '', now: 'الآن', s: 'ث', m: 'د', h: 'س', d: 'ي', offline: 'غير متصل — إعادة المحاولة',
       xfear: 'خوف شديد', fear2: 'خوف', neutral: 'محايد', greed2: 'طمع', xgreed: 'طمع شديد',
       rVix: 'مستوى VIX', rNdq: 'ناسداك اليوم', rBreadth: 'اتساع الحركة', rHaven: 'الذهب مقابل بيتكوين',
@@ -63,7 +65,7 @@
     movTab: 'gainers',
     toneM: 'all',
     board: null, quotes: {}, movers: null, radar: null, news: { market: null, local: null },
-    lastOk: 0, fails: 0,
+    lastOk: 0, fails: 0, at: {},
     seenNews: new Set(store.get('seen', [])),
   };
 
@@ -163,7 +165,31 @@
     if (wk && m < 600) return { cls: '', txt: `${t('closed')} · ${t('opensIn')} ${dur(600 - m)}` };
     return { cls: '', txt: t('closed') };
   }
+  const FEEDS_UI = [['prices', 'fPrices', 60e3], ['watch', 'fWatch', 90e3], ['movers', 'fMovers', 180e3], ['radar', 'fRadar', 360e3], ['newsM', 'fNewsM', 360e3], ['newsL', 'fNewsL', 360e3]];
+  const fmtStamp = (ms, tz = 'Asia/Riyadh', withYear = true) => new Date(ms).toLocaleString(lang === 'ar' ? 'ar-SA-u-nu-latn-ca-gregory' : 'en-GB', { timeZone: tz, weekday: 'short', day: 'numeric', month: 'short', year: withYear ? 'numeric' : undefined, hour: '2-digit', minute: '2-digit', second: tz === 'Asia/Riyadh' ? '2-digit' : undefined, hour12: false });
+  function renderUpd() {
+    const vals = Object.values(S.at);
+    if (vals.length) {
+      const last = Math.max(...vals);
+      $('#upd-main').textContent = `${fmtStamp(last)} ${t('ruh')}`;
+      const ag = $('#upd-ago');
+      ag.textContent = `(${ago(last)}${lang === 'en' && ago(last) !== t('now') ? ' ' + t('ago') : ''})`;
+      ag.classList.toggle('stale', Date.now() - last > 180e3);
+    }
+    const ix = (S.board?.rows || []).find((r) => r.id === 'ixic');
+    if (ix?.time) $('#upd-mkt').textContent = `${fmtStamp(ix.time * 1000, 'America/New_York', false)} ET`;
+    $('#upd-list').replaceChildren(...FEEDS_UI.map(([k, lab, lim]) => {
+      const v = S.at[k];
+      const stale = v && Date.now() - v > lim;
+      return h('li', { class: v ? (stale ? 'stale' : '') : 'wait', title: v ? fmtStamp(v) : '' },
+        h('b', { text: t(lab) }),
+        h('span', { text: v ? new Date(v).toLocaleTimeString('en-GB', { timeZone: 'Asia/Riyadh', hour12: false }) : '—' }),
+        h('i', { text: v ? ago(v) : '…' }));
+    }));
+  }
+
   function tickClock() {
+    renderUpd();
     $('#clk-ruh').textContent = zparts('Asia/Riyadh').hms;
     $('#clk-nyc').textContent = zparts('America/New_York').hms;
     for (const [id, f] of [['#sess-us', sessionUS], ['#sess-sa', sessionSA]]) {
@@ -519,16 +545,16 @@
   // ---------------- polling ----------------
   const ok = () => { S.lastOk = Date.now(); S.fails = 0; };
   const fail = () => { S.fails++; };
-  async function loadBoard() { try { S.board = await api('/api/board'); ok(); renderBoard(); if (S.range === '1d' && S.board.rows.some((r) => r.sym === S.sel)) loadChart(); } catch (e) { fail(); } }
+  async function loadBoard() { try { S.board = await api('/api/board'); S.at.prices = S.board.at || Date.now(); ok(); renderBoard(); if (S.range === '1d' && S.board.rows.some((r) => r.sym === S.sel)) loadChart(); } catch (e) { fail(); } }
   async function loadQuotes() {
     if (!S.watch.length) { renderWatch(); return; }
-    try { const j = await api('/api/quotes?s=' + S.watch.map(encodeURIComponent).join(',')); for (const q of j.rows) S.quotes[q.sym] = q; ok(); renderWatch(); renderTape(); if (S.range === '1d' && S.watch.includes(S.sel)) loadChart(); } catch (e) { fail(); }
+    try { const j = await api('/api/quotes?s=' + S.watch.map(encodeURIComponent).join(',')); for (const q of j.rows) S.quotes[q.sym] = q; S.at.watch = j.at || Date.now(); ok(); renderWatch(); renderTape(); if (S.range === '1d' && S.watch.includes(S.sel)) loadChart(); } catch (e) { fail(); }
   }
-  async function loadMovers() { try { S.movers = await api('/api/movers'); ok(); renderMovers(); renderRisk(); } catch (e) { fail(); } }
-  async function loadRadar() { try { S.radar = await api('/api/radar'); ok(); renderRadar(); } catch (e) { fail(); } }
+  async function loadMovers() { try { S.movers = await api('/api/movers'); S.at.movers = S.movers.at || Date.now(); ok(); renderMovers(); renderRisk(); } catch (e) { fail(); } }
+  async function loadRadar() { try { S.radar = await api('/api/radar'); S.at.radar = S.radar.at || Date.now(); ok(); renderRadar(); } catch (e) { fail(); } }
   async function loadNews() {
     await Promise.all(['market', 'local'].map(async (sc) => {
-      try { S.news[sc] = await api(`/api/news?scope=${sc}&lang=${lang}`); ok(); renderNews(sc); } catch (e) { fail(); }
+      try { S.news[sc] = await api(`/api/news?scope=${sc}&lang=${lang}`); S.at[sc === 'market' ? 'newsM' : 'newsL'] = S.news[sc].at || Date.now(); ok(); renderNews(sc); } catch (e) { fail(); }
     }));
     S.newsBoot = true;
   }

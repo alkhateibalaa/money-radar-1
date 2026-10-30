@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="app.css?v=1">
+<link rel="stylesheet" href="app.css?v=2">
 </head>
 <body>
 <header class="top">
@@ -34,6 +34,16 @@
 </header>
 
 <div class="tape" aria-label="Ticker tape"><div class="tape-track" id="tape"></div></div>
+
+<section class="upd" id="upd" aria-label="Last updates">
+  <div class="upd-main">
+    <span class="upd-k" data-i18n="lastUpd">Last update</span>
+    <span class="upd-v" id="upd-main">—</span>
+    <span class="upd-ago" id="upd-ago"></span>
+  </div>
+  <div class="upd-mkt"><span class="upd-k" data-i18n="mktTime">Nasdaq data as of</span> <span id="upd-mkt">—</span></div>
+  <ul class="upd-list" id="upd-list"></ul>
+</section>
 
 <main class="grid">
   <!-- Market board -->
@@ -146,6 +156,6 @@
 </footer>
 
 <div class="tip" id="tip" role="tooltip"></div>
-<script src="app.js?v=1"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>
