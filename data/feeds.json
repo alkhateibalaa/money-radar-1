@@ -6,7 +6,7 @@
   "icon": "globe",
   "method": "Web search across financial outlets",
   "status": "sweep",
-  "last_label": "22:39 Riyadh",
+  "last_label": "23:40 Riyadh",
   "cadence": "Hourly"
  },
  {
@@ -16,7 +16,7 @@
   "icon": "doc",
   "method": "Company results, call transcripts, target changes",
   "status": "sweep",
-  "last_label": "22:39 Riyadh",
+  "last_label": "23:40 Riyadh",
   "cadence": "Hourly"
  },
  {
@@ -26,7 +26,7 @@
   "icon": "candles",
   "method": "Quote pages read during each sweep",
   "status": "sweep",
-  "last_label": "22:39 Riyadh",
+  "last_label": "23:40 Riyadh",
   "cadence": "Hourly"
  },
  {
@@ -36,7 +36,7 @@
   "icon": "dish",
   "method": "Saudi outlets, Civil Defense reports, Tadawul",
   "status": "sweep",
-  "last_label": "22:39 Riyadh",
+  "last_label": "23:40 Riyadh",
   "cadence": "Hourly"
  },
  {
