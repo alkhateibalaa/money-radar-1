@@ -1,0 +1,82 @@
+[
+ {
+  "order": 1,
+  "scope": "market",
+  "when": "Mon Nov 2 · after the US close (about 00:30 Riyadh, Tue)",
+  "event": "Apple fiscal Q4 earnings",
+  "why": "Apple guided revenue up 9–11%; it is John Ternus's first call as CEO. One of the Nasdaq's biggest movers.",
+  "impact": "high",
+  "source": "MacRumors",
+  "url": "https://macrumors.com/2026/10/06/apple-q4-2026-earnings-nov-2"
+ },
+ {
+  "order": 3,
+  "scope": "market",
+  "when": "Tue Nov 3",
+  "event": "US midterm elections",
+  "why": "Results can swing sectors and push volatility up for a few sessions.",
+  "impact": "high",
+  "source": "Fox Business",
+  "url": "https://www.foxbusiness.com/economy/federal-reserve-interest-rate-decision-october-28-2026"
+ },
+ {
+  "order": 4,
+  "scope": "market",
+  "when": "Early November (date to be confirmed)",
+  "event": "Diamondback (FANG) quarterly update",
+  "why": "Realized oil prices and its 2027 plan are what the Street is waiting for.",
+  "impact": "med",
+  "source": "Quiver Quant",
+  "url": "https://www.quiverquant.com/news/Diamondback+Energy+gains+as+oil+stays+elevated+and+investors+digest+quarterly+update"
+ },
+ {
+  "order": 5,
+  "scope": "market",
+  "when": "December Fed meeting",
+  "event": "Fed rate decision: hike odds at 82.6%",
+  "why": "A hike would press on tech valuations; inflation (PCE 3.6%) is the reason.",
+  "impact": "high",
+  "source": "Fox Business",
+  "url": "https://www.foxbusiness.com/economy/federal-reserve-interest-rate-decision-october-28-2026"
+ },
+ {
+  "order": 1,
+  "scope": "local",
+  "when": "Now until Mar 1, 2027",
+  "event": "Riyadh Season 2026 'Big Time'",
+  "why": "Concerts, sports and Boulevard zones. Events can shift at short notice during security alerts.",
+  "impact": "med",
+  "source": "Saudi Life Guide",
+  "url": "https://saudilifeguide.com/riyadh-season-2026/"
+ },
+ {
+  "order": 2,
+  "scope": "local",
+  "when": "Sat Nov 7",
+  "event": "WWE Crown Jewel, Riyadh Season Arena (KAFD)",
+  "why": "A Riyadh Season headline event; tickets through webook.",
+  "impact": "med",
+  "source": "Listmag",
+  "url": "https://www.listmag.com/en/see-do/events-entertainment/unmissable-events-already-confirmed-for-riyadh-season-3741"
+ },
+ {
+  "order": 3,
+  "scope": "local",
+  "when": "Nov 9–11",
+  "event": "Riyadh Cat Show & Dog Village",
+  "why": "Family event in the Riyadh Season lineup; venue still to be confirmed.",
+  "impact": "low",
+  "source": "Listmag",
+  "url": "https://www.listmag.com/en/see-do/events-entertainment/unmissable-events-already-confirmed-for-riyadh-season-3741"
+ },
+ {
+  "order": 2,
+  "scope": "market",
+  "when": "Tue Nov 3 · after the US close",
+  "event": "AMD third-quarter earnings",
+  "why": "A key read on AI-chip demand after Intel's miss; AMD fell about 8% going in.",
+  "impact": "high",
+  "source": "MarketBeat",
+  "url": "https://www.marketbeat.com/earnings/reports/2026-11-3-advanced-micro-devices-inc-stock/"
+ }
+]

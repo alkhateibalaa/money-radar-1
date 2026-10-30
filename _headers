@@ -1,0 +1,6 @@
+/data/*
+  Cache-Control: no-cache, max-age=0
+/dash.js
+  Cache-Control: no-cache
+/
+  Cache-Control: no-cache

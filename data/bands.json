@@ -1,0 +1,26 @@
+[
+ {
+  "signal": "Bullish setup",
+  "min": 75,
+  "tone": "ok",
+  "meaning": "News, chart and valuation all lean positive today. Worth researching further."
+ },
+ {
+  "signal": "On watch",
+  "min": 55,
+  "tone": "info",
+  "meaning": "Good business news, but the chart or market backdrop is not helping yet."
+ },
+ {
+  "signal": "Wait for base",
+  "min": 35,
+  "tone": "warn",
+  "meaning": "Bad news or a broken chart. Let the price settle before looking again."
+ },
+ {
+  "signal": "Avoid for now",
+  "min": 0,
+  "tone": "bad",
+  "meaning": "Fresh damage and no sign of buyers. No setup."
+ }
+]

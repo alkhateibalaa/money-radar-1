@@ -1,0 +1,112 @@
+[
+ {
+  "id": "ixic",
+  "name": "Nasdaq Composite",
+  "level": 25303.15,
+  "unit": "pts",
+  "level_label": "Level: Fri ~15:30 ET",
+  "chg_pct": -3.37,
+  "chg_label": "Move: Fri ~15:30 ET",
+  "source": "Yahoo Finance",
+  "url": "https://finance.yahoo.com/markets/live/stock-market-today-friday-october-30-dow-sp-500-nasdaq-amazon-intel-131609630.html"
+ },
+ {
+  "id": "spx",
+  "name": "S&P 500",
+  "level": 7557.69,
+  "unit": "pts",
+  "level_label": "Level: Fri ~15:30 ET",
+  "chg_pct": -2.11,
+  "chg_label": "Move: Fri ~15:30 ET",
+  "source": "Yahoo Finance",
+  "url": "https://finance.yahoo.com/markets/live/stock-market-today-friday-october-30-dow-sp-500-nasdaq-amazon-intel-131609630.html"
+ },
+ {
+  "id": "dji",
+  "name": "Dow Jones",
+  "level": 51688.05,
+  "unit": "pts",
+  "level_label": "Level: Fri 15:27 ET",
+  "chg_pct": -1.25,
+  "chg_label": "Move: Fri 15:27 ET",
+  "source": "Yahoo Finance",
+  "url": "https://finance.yahoo.com/markets/live/stock-market-today-friday-october-30-dow-sp-500-nasdaq-amazon-intel-131609630.html"
+ },
+ {
+  "id": "vix",
+  "name": "VIX fear gauge",
+  "level": 21.85,
+  "unit": "pts",
+  "level_label": "Level: Fri ~15:30 ET",
+  "chg_pct": 27.03,
+  "chg_label": "Move: Fri ~15:30 ET",
+  "source": "Yahoo Finance",
+  "url": "https://finance.yahoo.com/markets/live/stock-market-today-friday-october-30-dow-sp-500-nasdaq-amazon-intel-131609630.html"
+ },
+ {
+  "id": "fedhike",
+  "name": "December Fed hike odds",
+  "level": 82.6,
+  "unit": "pct",
+  "level_label": "CME FedWatch, Oct 28",
+  "chg_pct": null,
+  "chg_label": "Up from 78.3% a day earlier",
+  "source": "Fox Business",
+  "url": "https://www.foxbusiness.com/economy/federal-reserve-interest-rate-decision-october-28-2026"
+ },
+ {
+  "id": "brent",
+  "name": "Brent crude",
+  "level": 114.23,
+  "unit": "usd",
+  "level_label": "Price: Fri Oct 30",
+  "chg_pct": 3.08,
+  "chg_label": "Move: on the day",
+  "source": "Trading Economics",
+  "url": "https://tradingeconomics.com/commodity/brent-crude-oil"
+ },
+ {
+  "id": "wti",
+  "name": "WTI crude",
+  "level": 104.22,
+  "unit": "usd",
+  "level_label": "Price: Fri ~15:30 ET",
+  "chg_pct": 2.18,
+  "chg_label": "Move: Fri ~15:30 ET",
+  "source": "Yahoo Finance",
+  "url": "https://finance.yahoo.com/markets/live/stock-market-today-friday-october-30-dow-sp-500-nasdaq-amazon-intel-131609630.html"
+ },
+ {
+  "id": "gold",
+  "name": "Gold (oz)",
+  "level": 3888.9,
+  "unit": "usd",
+  "level_label": "Price: Fri ~15:30 ET",
+  "chg_pct": -3.53,
+  "chg_label": "Move: Fri ~15:30 ET",
+  "source": "Yahoo Finance",
+  "url": "https://finance.yahoo.com/markets/live/stock-market-today-friday-october-30-dow-sp-500-nasdaq-amazon-intel-131609630.html"
+ },
+ {
+  "id": "btc",
+  "name": "Bitcoin",
+  "level": 76267.46,
+  "unit": "usd",
+  "level_label": "Price: Fri 15:33 ET",
+  "chg_pct": -5.54,
+  "chg_label": "Move: Fri 15:33 ET",
+  "source": "Yahoo Finance",
+  "url": "https://finance.yahoo.com/markets/live/stock-market-today-friday-october-30-dow-sp-500-nasdaq-amazon-intel-131609630.html"
+ },
+ {
+  "id": "tasi",
+  "name": "Tadawul (TASI)",
+  "level": 9921.5,
+  "unit": "pts",
+  "level_label": "Level: Thu close",
+  "chg_pct": -1.02,
+  "chg_label": "Move: Thu",
+  "source": "Trading Economics",
+  "url": "https://tradingeconomics.com/saudi-arabia/stock-market"
+ }
+]

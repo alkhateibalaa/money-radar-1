@@ -1,0 +1,52 @@
+[
+ {
+  "id": "web",
+  "order": 1,
+  "name": "Market news sweep",
+  "icon": "globe",
+  "method": "Web search across financial outlets",
+  "status": "sweep",
+  "last_label": "22:39 Riyadh",
+  "cadence": "Hourly"
+ },
+ {
+  "id": "filings",
+  "order": 2,
+  "name": "Earnings & analyst notes",
+  "icon": "doc",
+  "method": "Company results, call transcripts, target changes",
+  "status": "sweep",
+  "last_label": "22:39 Riyadh",
+  "cadence": "Hourly"
+ },
+ {
+  "id": "prices",
+  "order": 3,
+  "name": "Prices & indices",
+  "icon": "candles",
+  "method": "Quote pages read during each sweep",
+  "status": "sweep",
+  "last_label": "22:39 Riyadh",
+  "cadence": "Hourly"
+ },
+ {
+  "id": "regional",
+  "order": 4,
+  "name": "Riyadh & regional",
+  "icon": "dish",
+  "method": "Saudi outlets, Civil Defense reports, Tadawul",
+  "status": "sweep",
+  "last_label": "22:39 Riyadh",
+  "cadence": "Hourly"
+ },
+ {
+  "id": "live",
+  "order": 5,
+  "name": "Live market feed",
+  "icon": "bolt",
+  "method": "Market-data connector, not linked yet",
+  "status": "offline",
+  "last_label": "Not connected",
+  "cadence": "Real time once linked"
+ }
+]

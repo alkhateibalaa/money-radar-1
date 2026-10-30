@@ -1,0 +1,32 @@
+[
+ {
+  "part": "Size of the drop",
+  "key": "d_drop",
+  "max": 20,
+  "measures": "How far it fell. A bigger fall can mean a bigger discount."
+ },
+ {
+  "part": "Business quality",
+  "key": "d_quality",
+  "max": 30,
+  "measures": "Growth, profits and market position after the bad news."
+ },
+ {
+  "part": "Value after the drop",
+  "key": "d_value",
+  "max": 20,
+  "measures": "Valuation against its own history, and analyst targets."
+ },
+ {
+  "part": "Why it fell",
+  "key": "d_reason",
+  "max": 20,
+  "measures": "Fixable or temporary reasons score high; a broken business scores low."
+ },
+ {
+  "part": "Stabilising",
+  "key": "d_stable",
+  "max": 10,
+  "measures": "Whether the price is holding a level or still sliding."
+ }
+]

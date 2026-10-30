@@ -1,0 +1,26 @@
+[
+ {
+  "signal": "Dip candidate",
+  "min": 75,
+  "tone": "ok",
+  "meaning": "Strong business, big discount, fixable problem. Top of the research list."
+ },
+ {
+  "signal": "Watch for base",
+  "min": 60,
+  "tone": "info",
+  "meaning": "Good business, but let the price stop falling first."
+ },
+ {
+  "signal": "Wait",
+  "min": 45,
+  "tone": "warn",
+  "meaning": "An event or a re-rating is still playing out."
+ },
+ {
+  "signal": "Falling knife",
+  "min": 0,
+  "tone": "bad",
+  "meaning": "Weak reason, weak setup. Catching it is a gamble."
+ }
+]
