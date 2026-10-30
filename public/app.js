@@ -291,7 +291,7 @@
     if (!s) return;
     const form = $('#add-form');
     try {
-      const j = await api('/api/quotes?s=' + encodeURIComponent(s));
+      const j = await api('api/quotes?s=' + encodeURIComponent(s));
       const q = j.rows[0];
       if (!q || q.error || q.price == null) throw new Error('nf');
       S.quotes[s] = q;
@@ -317,7 +317,7 @@
     const sym = S.sel, r = S.range;
     $('#chart-sym').textContent = sym.replace('^', '');
     try {
-      const d = await api(`/api/history?s=${encodeURIComponent(sym)}&r=${r}`);
+      const d = await api(`api/history?s=${encodeURIComponent(sym)}&r=${r}`);
       if (sym !== S.sel || r !== S.range) return;
       chartData = d;
       drawChart();
@@ -545,16 +545,16 @@
   // ---------------- polling ----------------
   const ok = () => { S.lastOk = Date.now(); S.fails = 0; };
   const fail = () => { S.fails++; };
-  async function loadBoard() { try { S.board = await api('/api/board'); S.at.prices = S.board.at || Date.now(); ok(); renderBoard(); if (S.range === '1d' && S.board.rows.some((r) => r.sym === S.sel)) loadChart(); } catch (e) { fail(); } }
+  async function loadBoard() { try { S.board = await api('api/board'); S.at.prices = S.board.at || Date.now(); ok(); renderBoard(); if (S.range === '1d' && S.board.rows.some((r) => r.sym === S.sel)) loadChart(); } catch (e) { fail(); } }
   async function loadQuotes() {
     if (!S.watch.length) { renderWatch(); return; }
-    try { const j = await api('/api/quotes?s=' + S.watch.map(encodeURIComponent).join(',')); for (const q of j.rows) S.quotes[q.sym] = q; S.at.watch = j.at || Date.now(); ok(); renderWatch(); renderTape(); if (S.range === '1d' && S.watch.includes(S.sel)) loadChart(); } catch (e) { fail(); }
+    try { const j = await api('api/quotes?s=' + S.watch.map(encodeURIComponent).join(',')); for (const q of j.rows) S.quotes[q.sym] = q; S.at.watch = j.at || Date.now(); ok(); renderWatch(); renderTape(); if (S.range === '1d' && S.watch.includes(S.sel)) loadChart(); } catch (e) { fail(); }
   }
-  async function loadMovers() { try { S.movers = await api('/api/movers'); S.at.movers = S.movers.at || Date.now(); ok(); renderMovers(); renderRisk(); } catch (e) { fail(); } }
-  async function loadRadar() { try { S.radar = await api('/api/radar'); S.at.radar = S.radar.at || Date.now(); ok(); renderRadar(); } catch (e) { fail(); } }
+  async function loadMovers() { try { S.movers = await api('api/movers'); S.at.movers = S.movers.at || Date.now(); ok(); renderMovers(); renderRisk(); } catch (e) { fail(); } }
+  async function loadRadar() { try { S.radar = await api('api/radar'); S.at.radar = S.radar.at || Date.now(); ok(); renderRadar(); } catch (e) { fail(); } }
   async function loadNews() {
     await Promise.all(['market', 'local'].map(async (sc) => {
-      try { S.news[sc] = await api(`/api/news?scope=${sc}&lang=${lang}`); S.at[sc === 'market' ? 'newsM' : 'newsL'] = S.news[sc].at || Date.now(); ok(); renderNews(sc); } catch (e) { fail(); }
+      try { S.news[sc] = await api(`api/news?scope=${sc}&lang=${lang}`); S.at[sc === 'market' ? 'newsM' : 'newsL'] = S.news[sc].at || Date.now(); ok(); renderNews(sc); } catch (e) { fail(); }
     }));
     S.newsBoot = true;
   }

@@ -436,6 +436,13 @@ async function news(ctx, scope, lang) {
 export default {
   async fetch(req, env, ctx) {
     const url = new URL(req.url);
+    // Served at alaakhatib.com/money-radar/ (and at the root of workers.dev)
+    const BASE = '/money-radar';
+    if (url.pathname === BASE) return Response.redirect(url.origin + BASE + '/' + url.search, 301);
+    if (url.pathname.startsWith(BASE + '/')) {
+      url.pathname = url.pathname.slice(BASE.length);
+      req = new Request(url.toString(), req);
+    }
     const p = url.pathname;
     try {
       if (p === '/api/board') return json(await board(ctx), 30);
